@@ -3,7 +3,7 @@ package org.firstinspires.ftc.Helper;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
+
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
@@ -47,12 +47,10 @@ public class Hardware {
     public static DcMotor intake;
     @Reverse
     public static DcMotor outtake;
-    public static Servo flapServo;
+
     @Reverse
     public static DcMotor spindex;
 
-    @DoNotInitialize
-    public static Servo turretServo;
 
     // initialization code
     public static void init(HardwareMap map) {

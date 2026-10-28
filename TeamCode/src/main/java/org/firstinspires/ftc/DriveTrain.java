@@ -3,49 +3,51 @@ package org.firstinspires.ftc;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import org.firstinspires.ftc.Helper.Hardware;
-
-@TeleOp(name = "Drivetrain Motor Test")
+@TeleOp(name = "DriveTrain", group = "Drive")
 public class DriveTrain extends LinearOpMode {
+
     @Override
     public void runOpMode() {
-        Hardware.init(hardwareMap);
-        Hardware.frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        Hardware.frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        Hardware.rearLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        Hardware.rearRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        Hardware.outtake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        // Get the motors from the robot configuration
+        DcMotor frontLeft  = hardwareMap.get(DcMotor.class, "frontLeft");
+        DcMotor frontRight = hardwareMap.get(DcMotor.class, "frontRight");
+        DcMotor backLeft   = hardwareMap.get(DcMotor.class, "backLeft");
+        DcMotor backRight  = hardwareMap.get(DcMotor.class, "backRight");
+
+        // Left side is mounted backward, so reverse it.
+        // If your robot goes the wrong way, swap these two lines.
+        frontLeft.setDirection(DcMotor.Direction.FORWARD);
+        backLeft.setDirection(DcMotor.Direction.FORWARD);
+        frontRight.setDirection(DcMotor.Direction.REVERSE);
+        backRight.setDirection(DcMotor.Direction.REVERSE);
+
         waitForStart();
-        Gamepad old = new Gamepad();
-        boolean fl = false, fr = false, rl = false, rr = false;
+
         while (opModeIsActive()) {
-            if (gamepad1.a && !old.a)
-                rl = !rl;
-            if (gamepad1.b && !old.b)
-                rr = !rr;
-            if (gamepad1.x && !old.x)
-                fl = !fl;
-            if (gamepad1.y && !old.y)
-                fr = !fr;
-            gamepad1.copy(old);
-            Hardware.frontLeft.setPower(fl ? 1 : 0);
-            Hardware.frontRight.setPower(fr ? 1 : 0);
-            Hardware.rearLeft.setPower(rl ? 1 : 0);
-            Hardware.rearRight.setPower(rr ? 1 : 0);
-            /*Hardware.outtakeTop.setPower(fl ? 1 : 0);
-            Hardware.outtakeMiddle.setPower(fr ? 1 : 0);
-            Hardware.outtakeBottom.setPower(rl ? 1 : 0);
-            Hardware.intake.setPower(rr ? 1 : 0);*/
-            telemetry.addData("Rear Left (A)", rl);
-            telemetry.addLine();
-            telemetry.addData("Rear Right (B)", rr);
-            telemetry.addLine();
-            telemetry.addData("Front Left (X)", fl);
-            telemetry.addLine();
-            telemetry.addData("Front Right (Y)", fr);
-            telemetry.addLine();
+            double forward = -gamepad1.left_stick_y;  // push up to go forward
+            double strafe  = gamepad1.left_stick_x;   // push right to go right
+            double turn    = gamepad1.right_stick_x;  // push right to turn right
+
+            // Mecanum math
+            double fl = forward + strafe + turn;
+            double fr = forward - strafe - turn;
+            double bl = forward - strafe + turn;
+            double br = forward + strafe - turn;
+
+            // Keep every power between -1 and 1
+            double max = Math.max(1.0, Math.max(Math.abs(fl),
+                    Math.max(Math.abs(fr), Math.max(Math.abs(bl), Math.abs(br)))));
+
+            frontLeft.setPower(fl / max);
+            frontRight.setPower(fr / max);
+            backLeft.setPower(bl / max);
+            backRight.setPower(br / max);
+
+            telemetry.addData("Forward", forward);
+            telemetry.addData("Strafe", strafe);
+            telemetry.addData("Turn", turn);
             telemetry.update();
         }
     }

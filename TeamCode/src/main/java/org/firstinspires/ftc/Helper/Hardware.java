@@ -45,6 +45,8 @@ public class Hardware {
 
     @Reverse
     public static DcMotor intake;
+
+    public static DcMotor transfer;
     @Reverse
     public static DcMotor outtake;
 

@@ -42,7 +42,7 @@ public class Inout extends LinearOpMode {
             lastA = aNow;
 
             double power = running ? 1.0 : 0.0;
-            double power2 = running ? 0.5 : 0.0;
+            double power2 = running ? 0.8 : 0.0;
             intake.setPower(power);
             transfer.setPower(power);
             outtake.setPower(power2);

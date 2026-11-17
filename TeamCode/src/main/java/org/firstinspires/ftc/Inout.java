@@ -23,7 +23,7 @@ public class Inout extends LinearOpMode {
 
 
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
-        transfer.setDirection(DcMotorSimple.Direction.FORWARD);
+        transfer.setDirection(DcMotorSimple.Direction.REVERSE);
         outtake.setDirection(DcMotorSimple.Direction.REVERSE);
 
         boolean running = false;
@@ -42,9 +42,10 @@ public class Inout extends LinearOpMode {
             lastA = aNow;
 
             double power = running ? 1.0 : 0.0;
+            double power2 = running ? 0.5 : 0.0;
             intake.setPower(power);
             transfer.setPower(power);
-            outtake.setPower(power);
+            outtake.setPower(power2);
 
             telemetry.addData("Motors", running ? "ON" : "OFF");
             telemetry.addData("Intake Power", intake.getPower());

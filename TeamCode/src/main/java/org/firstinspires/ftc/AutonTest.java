@@ -1,9 +1,11 @@
 package org.firstinspires.ftc;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+@Autonomous
 public class AutonTest extends LinearOpMode {
     DcMotor leftDrive;
     DcMotor rightDrive;

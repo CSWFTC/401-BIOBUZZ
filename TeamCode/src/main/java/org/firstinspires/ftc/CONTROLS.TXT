@@ -1,0 +1,16 @@
+// CONTROLS
+//   Gamepad 1 (driver):
+//     Left stick up/down    = drive forward / backward
+//     Left stick left/right = strafe
+//     Right stick left/right = turn
+//   Gamepad 2 (operator):
+//     A          = toggle INTAKE + TRANSFER on / off
+//     B          = toggle TRANSFER + OUTTAKE on / off
+//     Outtake speed presets (D-pad):
+//       D-pad down  = 0.50
+//       D-pad left  = 0.65 (default)
+//       D-pad right = 0.80
+//       D-pad up    = 1.00
+//     Outtake fine tune:
+//       Y = speed +0.05
+//       X = speed -0.05

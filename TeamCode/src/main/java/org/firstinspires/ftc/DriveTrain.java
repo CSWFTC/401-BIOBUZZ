@@ -15,11 +15,14 @@ public class DriveTrain extends LinearOpMode {
         //   Port 1 = "backLeft"
         //   Port 2 = "frontRight"
         //   Port 3 = "backRight"
+        //   plus "intake", "transfer", "outtake"
         DcMotor frontLeft  = hardwareMap.get(DcMotor.class, "frontLeft");
         DcMotor backLeft   = hardwareMap.get(DcMotor.class, "backLeft");
         DcMotor frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         DcMotor backRight  = hardwareMap.get(DcMotor.class, "backRight");
         DcMotor intake     = hardwareMap.get(DcMotor.class, "intake");
+        DcMotor transfer   = hardwareMap.get(DcMotor.class, "transfer");
+        DcMotor outtake    = hardwareMap.get(DcMotor.class, "outtake");
 
         // Same directions as before (these work for forward and turning)
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
@@ -27,7 +30,10 @@ public class DriveTrain extends LinearOpMode {
         frontRight.setDirection(DcMotor.Direction.REVERSE);
         backRight.setDirection(DcMotor.Direction.FORWARD);
 
+        // Same directions as Inout
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
+        transfer.setDirection(DcMotorSimple.Direction.REVERSE);
+        outtake.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // Stop quickly when the sticks are released instead of coasting
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -37,6 +43,10 @@ public class DriveTrain extends LinearOpMode {
 
         // Ignore tiny stick movements so the robot doesn't creep
         double deadzone = 0.1;
+
+        // Inout: tap A to turn intake + transfer + outtake ON, tap A again for OFF
+        boolean running = false;
+        boolean lastA = false;
 
         waitForStart();
 
@@ -78,22 +88,33 @@ public class DriveTrain extends LinearOpMode {
             frontRight.setPower(fr);
             backRight.setPower(br);
 
-            // Intake: hold A to intake, hold B to spit out
-            if (gamepad1.a) {
-                intake.setPower(1.0);
-            } else if (gamepad1.b) {
-                intake.setPower(-1.0);
-            } else {
-                intake.setPower(0);
+            // Inout: tap A to toggle all three motors ON / OFF
+            boolean aNow = gamepad1.a;
+            if (aNow && !lastA) {
+                running = !running;
             }
+            lastA = aNow;
+
+            double power  = running ? 1.0 : 0.0;   // intake + transfer
+            double power2 = running ? 0.65 : 0.0;  // outtake
+            intake.setPower(power);
+            transfer.setPower(power);
+            outtake.setPower(power2);
 
             telemetry.addData("Left Y (drive)", y);
             telemetry.addData("Left X (strafe)", x);
             telemetry.addData("Right X (turn)", rx);
             telemetry.addData("FL / FR", "%.2f / %.2f", fl, fr);
             telemetry.addData("BL / BR", "%.2f / %.2f", bl, br);
+            telemetry.addData("Inout Motors", running ? "ON" : "OFF");
             telemetry.addData("Intake Power", intake.getPower());
+            telemetry.addData("Transfer Power", transfer.getPower());
+            telemetry.addData("Outtake Power", outtake.getPower());
             telemetry.update();
         }
+
+        intake.setPower(0);
+        transfer.setPower(0);
+        outtake.setPower(0);
     }
 }
